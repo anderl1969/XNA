@@ -13,12 +13,14 @@ namespace Firebirds
 {
     class Player : CollidingObject
     {
-        const int ANIM_PICS_HOR = 6;
-        const int ANIM_PICS_VER = 2;
+        const int ANIM_PICS_HOR = 12;
+        const int ANIM_PICS_VER = 3;
 
         const int SHOOTYOFFSET = 54 - 64 + 20;
-        const int SHOOT1XOFFSET = (256 / 2 - 44) - (64 / 2);
-        const int SHOOT2XOFFSET = (256 / 2 + 44) - (64 / 2);
+        ///const int SHOOT1XOFFSET = (256 / 2 - 44) - (64 / 2);
+        ///const int SHOOT2XOFFSET = (256 / 2 + 44) - (64 / 2);
+        const int SHOOT1XOFFSET = (256 / 2 - 44);
+        const int SHOOT2XOFFSET = (256 / 2 + 44);
         const int SHOOTRATIONPERSECONDS = 7;
 
         double ShootRatioTimer = 0;
@@ -46,8 +48,8 @@ namespace Firebirds
             this.content = content;
             this.graphics = graphics;
 
-            texPlayer = content.Load<Texture2D>("Graphics\\spitfire2");
-            texShadow = content.Load<Texture2D>("Graphics\\spitfire_shadow");
+            texPlayer = content.Load<Texture2D>("Graphics\\spitfire_3d");
+            texShadow = content.Load<Texture2D>("Graphics\\spitfire_shadow_3d");
             recPlayerPositionAndDimension.Width = texPlayer.Width / ANIM_PICS_HOR;
             recPlayerPositionAndDimension.Height = texPlayer.Height / ANIM_PICS_VER;
             recPlayerPositionAndDimension.X = graphics.Viewport.Width / 2
@@ -56,7 +58,7 @@ namespace Firebirds
                                               - (int)(recPlayerPositionAndDimension.Height * scalePlayer);
 
             recAnimationSource.X = 0;
-            recAnimationSource.Y = 0;
+            recAnimationSource.Y = texPlayer.Height / ANIM_PICS_VER;   ///mittlere Reihe = std
             recAnimationSource.Width = texPlayer.Width / ANIM_PICS_HOR;
             recAnimationSource.Height = texPlayer.Height / ANIM_PICS_VER;
 
@@ -87,12 +89,16 @@ namespace Firebirds
 
         public void Update(GameTime gameTime)
         {
+            recAnimationSource.Y = texPlayer.Height / ANIM_PICS_VER;   ///mittlere Reihe = std
+
             if (Keyboard.GetState().IsKeyDown(Keys.Left) & recPlayerPositionAndDimension.X > 0)
             {
+                recAnimationSource.Y = 0;
                 recPlayerPositionAndDimension.X -= 5;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Right) & recPlayerPositionAndDimension.X + (recPlayerPositionAndDimension.Width * scalePlayer) < graphics.Viewport.Width)
             {
+                recAnimationSource.Y = 2 * (texPlayer.Height / ANIM_PICS_VER);
                 recPlayerPositionAndDimension.X += 5;
 
             }
@@ -133,7 +139,7 @@ namespace Firebirds
             if (recAnimationSource.X == texPlayer.Width)
             {
                 recAnimationSource.X = 0;
-                recAnimationSource.Y += texPlayer.Height / ANIM_PICS_VER;
+                ///recAnimationSource.Y += texPlayer.Height / ANIM_PICS_VER;
             }
             //Haben wir das letzte Bild der Zeile 2 erreicht, springen wir auf die Anfangsposition der ersten Zeile zurück
             if (recAnimationSource.Y == texPlayer.Height)

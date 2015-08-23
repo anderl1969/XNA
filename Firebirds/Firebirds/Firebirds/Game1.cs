@@ -106,7 +106,7 @@ namespace Firebirds
 
             scrollingBackground.Update();
 
-            if (timer > 2.0)
+            if (timer > 99.0)
             {
                 timer = 0.0;
                 Enemy newEnemy = new Enemy();

@@ -19,7 +19,7 @@ namespace Firebirds
         public Rectangle recAnimationSource;
         public bool IsActive = true;
 
-        float scaleBullet = 0.5f;
+        float scaleBullet = 0.4f;
 
         public Bullet(int iPositionX, int iPositionY)
         {
@@ -32,6 +32,9 @@ namespace Firebirds
             texBullet = Content.Load<Texture2D>("Graphics\\bullet");
             recBulletPositionAndDimension.Width = texBullet.Width / ANIM_PICS_HOR;
             recBulletPositionAndDimension.Height = texBullet.Height / ANIM_PICS_VER;
+
+            ///horizontale Position der Bullets justieren
+            recBulletPositionAndDimension.X -= (int)(recBulletPositionAndDimension.Width / 2 * scaleBullet);
 
             recAnimationSource.X = 0;
             recAnimationSource.Y = 0;
