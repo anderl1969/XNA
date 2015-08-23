@@ -13,8 +13,8 @@ namespace Firebirds
 {
     class Player : CollidingObject
     {
-        const int ANIM_PICS_HOR = 1;
-        const int ANIM_PICS_VER = 12;
+        const int ANIM_PICS_HOR = 6;
+        const int ANIM_PICS_VER = 2;
 
         const int SHOOTYOFFSET = 54 - 64 + 20;
         const int SHOOT1XOFFSET = (256 / 2 - 44) - (64 / 2);
@@ -46,7 +46,7 @@ namespace Firebirds
             this.content = content;
             this.graphics = graphics;
 
-            texPlayer = content.Load<Texture2D>("Graphics\\spitfire99");
+            texPlayer = content.Load<Texture2D>("Graphics\\spitfire2");
             texShadow = content.Load<Texture2D>("Graphics\\spitfire_shadow");
             recPlayerPositionAndDimension.Width = texPlayer.Width / ANIM_PICS_HOR;
             recPlayerPositionAndDimension.Height = texPlayer.Height / ANIM_PICS_VER;

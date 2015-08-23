@@ -19,19 +19,19 @@ namespace Firebirds
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        ///Player player = new Player();
-        ///List<Enemy> enemyList = new List<Enemy>();
-        ///List<Enemy> enemy2DeleteList = new List<Enemy>();
-        ///List<Bullet> bullet2DeleteList = new List<Bullet>();
+        Player player = new Player();
+        List<Enemy> enemyList = new List<Enemy>();
+        List<Enemy> enemy2DeleteList = new List<Enemy>();
+        List<Bullet> bullet2DeleteList = new List<Bullet>();
 
-///        Color[,] colorArrayEnemy;
+        Color[,] colorArrayEnemy;
 
         ScrollingBackground scrollingBackground = new ScrollingBackground();
 
-///        SoundEffect soundBackground;
+        SoundEffect soundBackground;
 
-///        double timer = 0.0;
-///        Random randomGenerator = new Random();
+        double timer = 0.0;
+        Random randomGenerator = new Random();
 
 ///        private FPScounter fpsCounter;
 
@@ -65,8 +65,15 @@ namespace Firebirds
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            //dummy Enemy laden um Color-Array zu erstellen
+            Enemy dummyEnemy = new Enemy();
+            dummyEnemy.LoadContent(Content, GraphicsDevice);
+            colorArrayEnemy = dummyEnemy.TextureTo2DArray(dummyEnemy.texEnemy, dummyEnemy.getCountHorAnimPics(), dummyEnemy.getCountVerAnimPics(), 0);
 
             scrollingBackground.LoadContent(Content, GraphicsDevice);
+            soundBackground = Content.Load<SoundEffect>("Sound\\Fire_Birds");
+            soundBackground.Play();
+            player.LoadContent(Content, GraphicsDevice);
         }
 
         /// <summary>
@@ -93,8 +100,66 @@ namespace Firebirds
 
 
             // TODO: Add your update logic here
+            timer += gameTime.ElapsedGameTime.TotalSeconds;
+
+            player.Update(gameTime);
 
             scrollingBackground.Update();
+
+            if (timer > 2.0)
+            {
+                timer = 0.0;
+                Enemy newEnemy = new Enemy();
+                newEnemy.LoadContent(Content, GraphicsDevice);
+                newEnemy.recEnemyPositionAndDimension.X = randomGenerator.Next(0, GraphicsDevice.Viewport.Width - newEnemy.recEnemyPositionAndDimension.Width);
+                enemyList.Add(newEnemy);
+            }
+
+            Matrix matEnemy;
+            enemy2DeleteList.Clear();
+            bullet2DeleteList.Clear();
+
+            foreach (Enemy enemy in enemyList)
+            {
+                if (enemy.isActive)
+                {
+                    enemy.Update();
+                    matEnemy = Matrix.CreateScale(enemy.scaleEnemy) * Matrix.CreateTranslation(enemy.recEnemyPositionAndDimension.X, enemy.recEnemyPositionAndDimension.Y, 0);
+                    if (player.CheckCollision(enemy.recEnemyPositionAndDimension, colorArrayEnemy, matEnemy))
+                    //if (player.CheckCollision(enemy.recEnemyPositionAndDimension, enemy.colArrayEnemy, matEnemy))
+                    //if (player.CheckCollision(enemy.colArrayEnemy, matEnemy))
+                    //if (player.CheckCollision(enemy.recEnemyPositionAndDimension))
+                    {
+                        Exit();
+                    }
+
+                    foreach (Bullet bullet in player.bulletList)
+                    {
+                        if (!bullet.IsActive)
+                        {
+                            bullet2DeleteList.Add(bullet);
+                        }
+                        else
+                        {
+                            //Prüfen ob Kugel was getroffen hat
+                        }
+                    }
+
+                }
+                else
+                {
+                    enemy2DeleteList.Add(enemy);
+                }
+            }
+
+            foreach (Enemy enemy in enemy2DeleteList)
+            {
+                enemyList.Remove(enemy);
+            }
+            foreach (Bullet bullet in bullet2DeleteList)
+            {
+                player.bulletList.Remove(bullet);
+            }
 
             base.Update(gameTime);
         }
@@ -110,11 +175,11 @@ namespace Firebirds
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             scrollingBackground.Draw(spriteBatch);
-            ///player.Draw(spriteBatch);
-            ///foreach (Enemy enemy in enemyList)
-            ///{
-                ///enemy.Draw(spriteBatch);
-            ///}
+            player.Draw(spriteBatch);
+            foreach (Enemy enemy in enemyList)
+            {
+                enemy.Draw(spriteBatch);
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);
